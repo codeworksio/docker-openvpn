@@ -1,0 +1,14 @@
+machine:
+  services:
+    - docker
+dependencies:
+  cache_directories:
+    - "~/docker"
+  override:
+    - docker info
+    - if [[ -e ~/docker/image.tar ]]; then docker load --input ~/docker/image.tar; fi
+    - docker build --tag codeworksio/openvpn .
+    - mkdir -p ~/docker; docker save codeworksio/openvpn > ~/docker/image.tar
+test:
+  override:
+    - docker run --interactive --tty codeworksio/openvpn ps aux | grep 'ubuntu.\+ps aux'
